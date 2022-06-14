@@ -3,7 +3,7 @@ Finding the factors of analog filter transfer function using Particle Swarm and 
 
 ## Instalation
 
-<!-- This code only uses two libraries, [matplotlib](https://matplotlib.org/3.5.1/index.html) and [numpy](https://numpy.org/). Use the package manager [pip](https://pip.pypa.io/en/stable/) to install. -->
+This code only uses three libraries, [matplotlib](https://matplotlib.org/3.5.1/index.html), [numpy](https://numpy.org/) and [scipy](https://docs.scipy.org/doc/scipy/index.html). Use the package manager [pip](https://pip.pypa.io/en/stable/) to install.
 
 ```bash
 python3 -m pip install -r requirements.txt
