@@ -1,5 +1,7 @@
 # Filter design by optimization
-Finding the factors of analog filter transfer function using Particle Swarm and Tribes optimization algorithms.
+This code finds the factors of analog filters transfer functions using Traditional Particle Swarm and Tribes variation optimization algorithms.
+It uses the general polynomial of analog filters transfer function.
+
 
 ## Instalation
 
