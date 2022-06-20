@@ -2,7 +2,6 @@
 This code finds the factors of analog filters transfer functions using Traditional Particle Swarm and Tribes variation optimization algorithms.
 It uses the general polynomial of analog filters transfer function.
 
-
 ## Instalation
 
 This code only uses three libraries, [matplotlib](https://matplotlib.org/3.5.1/index.html), [numpy](https://numpy.org/) and [scipy](https://docs.scipy.org/doc/scipy/index.html). Use the package manager [pip](https://pip.pypa.io/en/stable/) to install.
