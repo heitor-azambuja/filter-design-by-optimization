@@ -1,6 +1,5 @@
 # Filter design by optimization
-This code finds the factors of dinite impulse respone (FIR) digital filters transfer functions using Traditional Particle Swarm and Tribes variation optimization algorithms.
-It uses the general polynomial of analog filters transfer function.
+This code finds the factors of finite impulse respone (FIR) digital filters transfer functions using Traditional Particle Swarm and Tribes variation optimization algorithms.
 
 ## Instalation
 
