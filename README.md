@@ -1,5 +1,5 @@
 # Filter design by optimization
-This code finds the factors of finite impulse respone (FIR) digital filters transfer functions using Traditional Particle Swarm and Tribes variation optimization algorithms.
+This code finds the factors of finite impulse respone (FIR) digital filters transfer functions using Traditional Particle Swarm and Tribes variation optimization algorithms. It plots the error convergency over iterations and both desired and obtained filters response over normalized angular frequency.
 
 ## Instalation
 
