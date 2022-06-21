@@ -1,5 +1,5 @@
 # Filter design by optimization
-This code finds the factors of fir digital filters transfer functions using Traditional Particle Swarm and Tribes variation optimization algorithms.
+This code finds the factors of dinite impulse respone (FIR) digital filters transfer functions using Traditional Particle Swarm and Tribes variation optimization algorithms.
 It uses the general polynomial of analog filters transfer function.
 
 ## Instalation
@@ -10,8 +10,18 @@ This code only uses three libraries, [matplotlib](https://matplotlib.org/3.5.1/i
 python3 -m pip install -r requirements.txt
 ```
 
+## To Do
+- Create classes to goal filter generation and particle swarm;
+- More filter types (butter, cheby, etc);
+- Apply optimization to Infinite Impulse Response (IIR) filters;
+
 ## References
-- FIR filter PSO design in MATLAB ([link](https://github.com/zypher606/ParticleSwarmOperation-FIR))
+- FIR filter PSO design in MATLAB ([code](https://github.com/zypher606/ParticleSwarmOperation-FIR))
+- Swarm Intelligence - James Kennedy and Russell C. Eberhart ([book](https://www.sciencedirect.com/book/9781558605954/swarm-intelligence))
+- A review of Different Optimization Algorithms for a Linear phase FIR filter design problem ([article](https://ieeexplore.ieee.org/document/8378122))
+- Tribe-PSO: A novel global optimization algorithm and its application in molecular docking ([article](https://www.sciencedirect.com/science/article/abs/pii/S0169743905001346))
+- Multipopulation Ensemble Particle Swarm Optimizer for Engineering Design Problems ([article](https://www.hindawi.com/journals/mpe/2020/1450985/))
+
 
 ## Author
 - Heitor Teixeira de Azambuja
