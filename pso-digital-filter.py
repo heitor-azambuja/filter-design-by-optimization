@@ -1,13 +1,13 @@
-from scipy.signal import freqs, iirfilter, firwin, freqz
+from scipy.signal import firwin, freqz
 import matplotlib.pyplot as plt
 import numpy as np
 
 # PSO config
-ITERATIONS = 1000
-POPULATION = 50
+ITERATIONS = 2000
+POPULATION = 100
 PERSONAL_WEIGHT = 2
 SOCIAL_WEIGHT = 2
-ERROR_THRESHOLD = 0.01
+ERROR_THRESHOLD = 0.001
 INERTIA = 1
 
 MAX_VEL = 2
@@ -20,8 +20,8 @@ DAMPINIG = 0.9995
 
 # filter config
 DESIRED_FILTER = 2  # 1 = lowpass; any = bandpass
-GOAL_ORDER = 20
-ORDER = 20
+GOAL_ORDER = 15
+ORDER = GOAL_ORDER
 N_COEFICIENTS = ORDER
 
 
@@ -51,15 +51,11 @@ plt.xlabel('Iterations')
 plt.ylabel('Error')
 plt.grid(which='both', axis='both')
 
-
-# position_num = []
 position = []
-# velocity_num = []
 velocity = []
-# particle_best_num = []
 particle_best = []
-# global_best_num = []
 global_best = []
+
 
 def calculateError(denominator):
     error = 0
