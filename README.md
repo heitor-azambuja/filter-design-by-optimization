@@ -1,5 +1,5 @@
 # Filter design by optimization
-This code finds the factors of finite impulse respone (FIR) digital filters transfer functions using Traditional Particle Swarm and Tribes variation optimization algorithms. It plots the error convergency over iterations and both desired and obtained filters response over normalized angular frequency.
+This code finds the factors of finite impulse respone (FIR) digital filters transfer functions using Traditional Particle Swarm and TRIBES (an parameter free adaptative PSO) optimization algorithms. It plots the error convergency over iterations and both desired and obtained filters response over normalized angular frequency.
 
 ## Instalation
 
@@ -18,7 +18,7 @@ python3 -m pip install -r requirements.txt
 - FIR filter PSO design in MATLAB ([code](https://github.com/zypher606/ParticleSwarmOperation-FIR))
 - Swarm Intelligence - James Kennedy and Russell C. Eberhart ([book](https://www.sciencedirect.com/book/9781558605954/swarm-intelligence))
 - A review of Different Optimization Algorithms for a Linear phase FIR filter design problem ([article](https://ieeexplore.ieee.org/document/8378122))
-- Tribe-PSO: A novel global optimization algorithm and its application in molecular docking ([article](https://www.sciencedirect.com/science/article/abs/pii/S0169743905001346))
+- Performance evaluation of TRIBES, an adaptive particle swarm optimization algorithm ([article](https://link.springer.com/article/10.1007/s11721-009-0026-8))
 - Multipopulation Ensemble Particle Swarm Optimizer for Engineering Design Problems ([article](https://www.hindawi.com/journals/mpe/2020/1450985/))
 
 
