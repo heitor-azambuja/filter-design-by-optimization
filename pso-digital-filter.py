@@ -11,12 +11,10 @@ PERSONAL_WEIGHT = 2
 SOCIAL_WEIGHT = 2
 ERROR_THRESHOLD = 0.01
 INERTIA = 1
-
 MAX_VEL = 2
 MIN_VEL = -2
 MAX_POSITION = 1
 MIN_POSITION = -1
-
 DAMPINIG = 0.999
 # DAMPINIG = 1
 
@@ -26,7 +24,6 @@ GOAL_ORDER = 2
 ORDER = GOAL_ORDER
 N_COEFICIENTS = ORDER
 
-
 PLOT_GRAPHS = False
 SAVE_METRICS = True
 FILE_NAME = 'pso-metrics-ord{}.json'.format(ORDER)
@@ -35,7 +32,23 @@ metrics = {
     'error': [],
     'it_duration': [],
     'evaluations': 0,
-    'final_denominator': []
+    'final_denominator': [],
+    'parameters': {
+        'order': ORDER,
+        'goal_order': GOAL_ORDER,
+        'dampening': DAMPINIG,
+        'max_vel': MAX_VEL,
+        'min_vel': MIN_VEL,
+        'max_position': MAX_POSITION,
+        'min_position': MIN_POSITION,
+        'desired_filter': DESIRED_FILTER,
+        'population': POPULATION,
+        'personal_weight': PERSONAL_WEIGHT,
+        'social_weight': SOCIAL_WEIGHT,
+        'error_threshold': ERROR_THRESHOLD,
+        'inertia': INERTIA,
+        'iterations': ITERATIONS,
+    }
 }
 
 if DESIRED_FILTER == 1:
