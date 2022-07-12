@@ -1,6 +1,7 @@
 from scipy.signal import firwin, freqz
 import matplotlib.pyplot as plt
 import numpy as np
+from jsonHandler import save_json
 
 ITERATIONS = 2000
 ERROR_THRESHOLD = 0.01
@@ -13,6 +14,20 @@ GOAL_ORDER = 2
 ORDER = GOAL_ORDER
 N_COEFICIENTS = ORDER
 
+PLOT_GRAPHS = False
+SAVE_METRICS = True
+FILE_NAME = 'tribes-metrics-ord{}.json'.format(ORDER)
+
+metrics = {
+    'iterations': ITERATIONS,
+    'evaluations': 0,
+    'adaptations': 0,
+    'pivot': 0,
+    'disturbed_pivot': 0,
+    'gaussian': 0,
+}
+
+
 if DESIRED_FILTER == 1:
     print('lowpass')
     goal_h = firwin(GOAL_ORDER, [0.4], pass_zero='lowpass')
@@ -23,22 +38,24 @@ print('Desired filter response: {}'.format(goal_h))
 
 desired_w, desired_h = freqz(goal_h)
 
-plt.figure(1)
-plt.plot(desired_w/np.pi, 20 * np.log10(abs(desired_h)))
-plt.axis('tight')
-plt.xlabel('Frequency (normalized)')
-plt.ylabel('Amplitude response [dB]')
-plt.grid(which='both', axis='both')
-# plt.show()
+if PLOT_GRAPHS:
+    plt.figure(1)
+    plt.plot(desired_w/np.pi, 20 * np.log10(abs(desired_h)))
+    plt.axis('tight')
+    plt.xlabel('Frequency (normalized)')
+    plt.ylabel('Amplitude response [dB]')
+    plt.grid(which='both', axis='both')
+    # plt.show()
 
-plt.figure(2)
+    plt.figure(2)
 
-plt.xlabel('Iterations')
-plt.ylabel('Error')
-plt.grid(which='both', axis='both')
+    plt.xlabel('Iterations')
+    plt.ylabel('Error')
+    plt.grid(which='both', axis='both')
 
 
 def calculateError(denominator):
+    metrics['evaluations'] += 1
     error = 0
     _, h = freqz(denominator)
     for i in range(len(h)):
@@ -61,6 +78,7 @@ g_pos = []
 
 def swarm_adaptation():
     # print('Swarm adaptation')
+    metrics['adaptations'] += 1
     global g, g_pos, tribe
     
     tribes_to_remove = []
@@ -161,6 +179,7 @@ def swarm_adaptation():
             
 
 def pivot(t, p_idx):
+    metrics['pivot'] += 1
     # print('Pivot')
     # Determine particle best informant
     # check if this is the best particle of the tribe
@@ -189,6 +208,7 @@ def pivot(t, p_idx):
 
 
 def disturbed_pivot(t, p_idx):
+    metrics['disturbed_pivot'] += 1
     # print('Disturbed pivot')
     new_position = pivot(t, p_idx)
     # Determine particle best informant
@@ -207,6 +227,7 @@ def disturbed_pivot(t, p_idx):
     
 
 def gaussian(t, p_idx):
+    metrics['gaussian'] += 1
     # print('Gaussian')
     # Determine particle best informant
     # check if this is the best particle of the tribe
@@ -214,7 +235,7 @@ def gaussian(t, p_idx):
         informant_best = g
     else:
         informant_best = tribe[t]['tribe_best_error']
-    particle_best_err = tribe[t]['particle_best_error'][p_idx]
+    # particle_best_err = tribe[t]['particle_best_error'][p_idx]82
 
     # particle best position
     p_pos = tribe[t]['particle_best_pos'][p_idx]
@@ -325,11 +346,12 @@ if __name__ == '__main__':
                     tribe[t]['tribe_worst_error'] = tribe[t]['current_error'][p]
                     tribe[t]['tribe_worst_idx'] = p
 
-        plt.figure(2)
-        plt.ion()
-        plt.show()
-        plt.plot(i + 1, g, 'ro', markersize=4)
-        plt.pause(0.001)
+        if PLOT_GRAPHS:
+            plt.figure(2)
+            plt.ion()
+            plt.show()
+            plt.plot(i + 1, g, 'ro', markersize=4)
+            plt.pause(0.001)
 
         # Stop if the swarm converged
         if g <= ERROR_THRESHOLD:
@@ -364,8 +386,8 @@ if __name__ == '__main__':
     print('Final denominator: {}'.format(g_pos))
     final_w, final_h = freqz(g_pos)
 
-
-    plt.ioff()
-    plt.figure(1)
-    plt.plot(final_w / np.pi, 20 * np.log10(abs(final_h)))
-    plt.show()
+    if PLOT_GRAPHS:
+        plt.ioff()
+        plt.figure(1)
+        plt.plot(final_w / np.pi, 20 * np.log10(abs(final_h)))
+        plt.show()
