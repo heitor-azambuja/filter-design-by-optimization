@@ -11,10 +11,10 @@ group.add_argument('-bp', '--bandpass', action='store_true')
 group.add_argument('-lp', '--lowpass', action='store_true')
 
 parser.add_argument('-o', '--order', type=int, default=2,
-                    help='Order of the filter. Defaults to 2.'
+					help='Order of the filter. Defaults to 2.'
 )
 parser.add_argument('-i', '--iterations', type=int, default=2000,
-                    help='Number of iterations. Defaults to 2000.'
+					help='Number of iterations. Defaults to 2000.'
 )
 parser.add_argument('-p', '--plot', action='store_true', help='Plot error and filter response.')
 parser.add_argument('-s', '--save', action='store_true', help='Save metrics to json file (defaults to true).')
@@ -52,42 +52,47 @@ metrics = {
 		'goal_order': GOAL_ORDER,
 		'max_position': MAX_POSITION,
 		'min_position': MIN_POSITION,
-		'desired_filter': None,
+		'desired_filter_type': None,
+		'desired_filter_denominator': None,
 		'error_threshold': ERROR_THRESHOLD,
 		'iterations': ITERATIONS,
 	}
 }
 
 if args.lowpass: # lowpass filter
-    print('lowpass')
-    metrics['parameters']['desired_filter'] = 'lowpass'
-    goal_h = firwin(GOAL_ORDER, [0.4], pass_zero='lowpass')
+	metrics['parameters']['desired_filter_type'] = 'lowpass'
+	goal_h = firwin(GOAL_ORDER, [0.4], pass_zero='lowpass')
 else: # bandpass filter [DEFAULT]
-    print('bandpass')
-    metrics['parameters']['desired_filter'] = 'bandpass'
-    goal_h = firwin(GOAL_ORDER, [0.4, 0.7], pass_zero='bandpass')
-print('Desired filter response: {}'.format(goal_h))
+	metrics['parameters']['desired_filter_type'] = 'bandpass'
+	goal_h = firwin(GOAL_ORDER, [0.4, 0.7], pass_zero='bandpass')
+
+
+if VERBOSE:
+	print('Filter type: {}'.format(metrics['parameters']['desired_filter_type']))
+	print('Desired filter denominator: {}'.format(goal_h))
+
+metrics['parameters']['desired_filter_denominator'] = goal_h.tolist()
 
 desired_w, desired_h = freqz(goal_h)
 
 if PLOT_GRAPHS:
-    plt.figure(1, figsize=(12, 5))
-    ax_response = plt.subplot(122, label='response')
-    ax_response.plot(desired_w/np.pi, 20 * np.log10(abs(desired_h)), linewidth=6, label='Desired')
-    plt.axis('tight')
-    plt.xlabel('Frequency (normalized)')
-    plt.ylabel('Amplitude response [dB]')
-    plt.grid(which='both', axis='both')
-    plt.legend()
-    plt.title('Frequency Response')
+	plt.figure(1, figsize=(12, 5))
+	ax_response = plt.subplot(122, label='response')
+	ax_response.plot(desired_w/np.pi, 20 * np.log10(abs(desired_h)), linewidth=6, label='Desired')
+	plt.axis('tight')
+	plt.xlabel('Frequency (normalized)')
+	plt.ylabel('Amplitude response [dB]')
+	plt.grid(which='both', axis='both')
+	plt.legend()
+	plt.title('Frequency Response')
 
-    ax_error = plt.subplot(121, label='error')
-    plt.title('Convergency')
-    plt.xlabel('Iterations')
-    plt.ylabel('Error')
-    plt.grid(which='both', axis='both')
+	ax_error = plt.subplot(121, label='error')
+	plt.title('Convergency')
+	plt.xlabel('Iterations')
+	plt.ylabel('Error')
+	plt.grid(which='both', axis='both')
 
-    plt.tight_layout()
+	plt.tight_layout()
 
 
 def calculateError(denominator):
@@ -164,7 +169,8 @@ def swarm_adaptation():
 					new_particles['tribe_best_idx'] = len(new_particles['position']) - 1
 					new_particles['tribe_best_error'] = error
 					if error < g:
-						print("Generated particle on the new global best: {}".format(error))
+						if VERBOSE:
+							print("Generated particle on the new global best: {}".format(error))
 						g = error
 						g_pos = new_particles['position'][-1]
 				
@@ -323,17 +329,18 @@ if __name__ == '__main__':
 	tribe[0]['tribe_best_error'] = g
 	
 	# Sanity check
-	print('\n\n')
-	print(tribe)
-	print('\n\n')
-	print(g)
-	print('\n\n')
+	if VERBOSE:
+		print('\n\n')
+		print(tribe)
+		print('\n\n')
+		print(g)
+		print('\n\n')
 
 	NL = 1
 	n = 0
 	
 	for i in range(ITERATIONS):
-		if (i + 1) % 50 == 0:
+		if ((i + 1) % 50 == 0) and VERBOSE:
 			print('{} Iterations.'.format(i + 1))
 		
 		start = time()
@@ -377,7 +384,8 @@ if __name__ == '__main__':
 							g = tribe[t]['current_error'][p]
 							g_pos = tribe[t]['position'][p]
 							
-							print('New Global Best: {}'.format(tribe[t]['current_error'][p]))
+							if VERBOSE:
+								print('New Global Best: {}'.format(tribe[t]['current_error'][p]))
 				
 				# Update the tribe worst
 				if tribe[t]['current_error'][p] > tribe[t]['tribe_worst_error']:
@@ -394,13 +402,15 @@ if __name__ == '__main__':
 
 		# Stop if the swarm converged
 		if g <= ERROR_THRESHOLD:
-			print('Converged on iteration {}'.format(i + 1))
+			if VERBOSE:
+				print('Converged on iteration {}'.format(i + 1))
 			metrics['it_duration'].append(time() - start)
 			metrics['converged'] = True
 			break
 		
 		if (i + 1) == ITERATIONS:
-			print('Reached maximum number of iterations')
+			if VERBOSE:
+				print('Reached maximum number of iterations')
 			metrics['it_duration'].append(time() - start)
 			metrics['reachedMaxIt'] = True
 			break
@@ -430,7 +440,8 @@ if __name__ == '__main__':
 
 	metrics['final_denominator'] = g_pos
 
-	print('Final denominator: {}'.format(g_pos))
+	if VERBOSE:
+		print('Final denominator: {}'.format(g_pos))
 	final_w, final_h = freqz(g_pos)
 
 	if PLOT_GRAPHS:

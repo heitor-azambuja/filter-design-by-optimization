@@ -62,7 +62,8 @@ metrics = {
         'min_vel': MIN_VEL,
         'max_position': MAX_POSITION,
         'min_position': MIN_POSITION,
-        'desired_filter': None,
+        'desired_filter_type': None,
+        'desired_filter_denominator': None,
         'population': POPULATION,
         'personal_weight': PERSONAL_WEIGHT,
         'social_weight': SOCIAL_WEIGHT,
@@ -73,16 +74,17 @@ metrics = {
 }
 
 if args.lowpass: # lowpass filter
-    metrics['parameters']['desired_filter'] = 'lowpass'
+    metrics['parameters']['desired_filter_type'] = 'lowpass'
     goal_h = firwin(GOAL_ORDER, [0.4], pass_zero='lowpass')
 else: # bandpass filter [DEFAULT]
-    metrics['parameters']['desired_filter'] = 'bandpass'
+    metrics['parameters']['desired_filter_type'] = 'bandpass'
     goal_h = firwin(GOAL_ORDER, [0.4, 0.7], pass_zero='bandpass')
 
 if VERBOSE:
-    print('Filter type: {}'.format(metrics['parameters']['desired_filter']))
-    print('Desired filter response: {}'.format(goal_h))
+    print('Filter type: {}'.format(metrics['parameters']['desired_filter_type']))
+    print('Desired filter denominator: {}'.format(goal_h))
 
+metrics['parameters']['desired_filter_denominator'] = goal_h.tolist()
 
 desired_w, desired_h = freqz(goal_h)
 
