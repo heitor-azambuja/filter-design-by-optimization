@@ -1,12 +1,22 @@
 from jsonHandler import save_json, load_json
 import matplotlib.pyplot as plt
 import numpy as np
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-o', '--order', type=int, default=2,
+                    help='Order of the filter. Defaults to 2.')
+parser.add_argument('-n', '--number_of_files', type=int, default=4, 
+                    help='Number of files to be averaged. How many offsets of the same file name. Defaults to 4')
+parser.add_argument('-s', '--save', action='store_true', 
+                    help='Save metrics to json file.')
 
-FILES_NUM = 4
-ORDER = 6
+args = parser.parse_args()
 
-SAVE_AVERARED_METRICS = True
+FILES_NUM = args.number_of_files
+ORDER = args.order
+
+SAVE_AVERARED_METRICS = args.save
 
 first_pso_file = 'results/pso-ord{}-metrics.json'.format(ORDER)
 first_tribes_file = 'results/tribes-ord{}-metrics.json'.format(ORDER)
