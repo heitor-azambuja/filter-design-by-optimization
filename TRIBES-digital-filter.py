@@ -1,4 +1,3 @@
-from re import VERBOSE
 from scipy.signal import firwin, freqz
 from time import time
 import matplotlib.pyplot as plt
