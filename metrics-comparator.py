@@ -26,8 +26,6 @@ FILE_2 = 'results/tribes-ord{}-metrics{}.json'.format(ORDER, FILE_OFFSET)
 def compare_metrics(file_1, file_2):
     metrics_1 = load_json(file_1)
     metrics_2 = load_json(file_2)
-    # plot_metrics(metrics_1)
-    # plot_metrics(metrics_2)
 
     plt.figure('PSO and TRIBES comparison', figsize=(14, 10))
     plt.suptitle('PSO and TRIBES comparison, filter order {}'.format(ORDER))
