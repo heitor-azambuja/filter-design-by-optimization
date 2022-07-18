@@ -3,10 +3,29 @@ from time import time
 import matplotlib.pyplot as plt
 import numpy as np
 from jsonHandler import save_json
+import argparse
+
+parser = argparse.ArgumentParser()
+group = parser.add_mutually_exclusive_group()
+group.add_argument('-bp', '--bandpass', action='store_true', help='Use bandpass filter (default)')
+group.add_argument('-lp', '--lowpass', action='store_true', help='Use lowpass filter')
+
+parser.add_argument('-o', '--order', type=int, default=2,
+                    help='Order of the filter. Defaults to 2.'
+)
+parser.add_argument('-i', '--iterations', type=int, default=2000,
+                    help='Number of iterations. Defaults to 2000.'
+)
+parser.add_argument('-po', '--population', type=int, default=100, help='Swarm size. Defaults to 100.')
+parser.add_argument('-p', '--plot', action='store_true', help='Plot error and filter response.')
+parser.add_argument('-s', '--save', action='store_true', help='Save metrics to json file (defaults to true).')
+parser.add_argument('-v', '--verbose', action='store_true', help='Print verbose output.')
+
+args = parser.parse_args()
 
 # PSO config
-ITERATIONS = 2000
-POPULATION = 100
+ITERATIONS = args.iterations
+POPULATION = args.population
 PERSONAL_WEIGHT = 2
 SOCIAL_WEIGHT = 2
 ERROR_THRESHOLD = 0.01
@@ -19,16 +38,18 @@ DAMPINIG = 0.999
 # DAMPINIG = 1
 
 # filter config
-DESIRED_FILTER = 2  # 1 = lowpass; any = bandpass
-GOAL_ORDER = 2
+GOAL_ORDER = args.order
 ORDER = GOAL_ORDER
 N_COEFICIENTS = ORDER
 
-PLOT_GRAPHS = False
-SAVE_METRICS = True
-FILE_NAME = 'pso-metrics-ord{}.json'.format(ORDER)
+PLOT_GRAPHS = args.plot
+SAVE_METRICS = args.save
+FILE_NAME = 'results/pso-ord{}-metrics.json'.format(ORDER)
+VERBOSE = args.verbose
 
 metrics = {
+    'converged': False,
+    'reachedMaxIt': False,
     'error': [],
     'it_duration': [],
     'evaluations': 0,
@@ -41,7 +62,7 @@ metrics = {
         'min_vel': MIN_VEL,
         'max_position': MAX_POSITION,
         'min_position': MIN_POSITION,
-        'desired_filter': DESIRED_FILTER,
+        'desired_filter': None,
         'population': POPULATION,
         'personal_weight': PERSONAL_WEIGHT,
         'social_weight': SOCIAL_WEIGHT,
@@ -51,31 +72,38 @@ metrics = {
     }
 }
 
-if DESIRED_FILTER == 1:
-    print('lowpass')
+if args.lowpass: # lowpass filter
+    metrics['parameters']['desired_filter'] = 'lowpass'
     goal_h = firwin(GOAL_ORDER, [0.4], pass_zero='lowpass')
-else:
-    print('bandpass')
+else: # bandpass filter [DEFAULT]
+    metrics['parameters']['desired_filter'] = 'bandpass'
     goal_h = firwin(GOAL_ORDER, [0.4, 0.7], pass_zero='bandpass')
-print('Desired filter response: {}'.format(goal_h))
+
+if VERBOSE:
+    print('Filter type: {}'.format(metrics['parameters']['desired_filter']))
+    print('Desired filter response: {}'.format(goal_h))
 
 
 desired_w, desired_h = freqz(goal_h)
 
 if PLOT_GRAPHS:
-    plt.figure(1)
-    plt.plot(desired_w/np.pi, 20 * np.log10(abs(desired_h)))
+    plt.figure(1, figsize=(12, 5))
+    ax_response = plt.subplot(122, label='response')
+    ax_response.plot(desired_w/np.pi, 20 * np.log10(abs(desired_h)), linewidth=6, label='Desired')
     plt.axis('tight')
     plt.xlabel('Frequency (normalized)')
     plt.ylabel('Amplitude response [dB]')
     plt.grid(which='both', axis='both')
-    # plt.show()
+    plt.legend()
+    plt.title('Frequency Response')
 
-    plt.figure(2)
-
+    ax_error = plt.subplot(121, label='error')
+    plt.title('Convergency')
     plt.xlabel('Iterations')
     plt.ylabel('Error')
     plt.grid(which='both', axis='both')
+
+    plt.tight_layout()
 
 position = []
 velocity = []
@@ -116,7 +144,7 @@ if __name__ == '__main__':
         # measure iteration duration
         start = time()
 
-        if (i + 1) % 50 == 0:
+        if ((i + 1) % 50 == 0) and VERBOSE:
             print('{} Iterations.'.format(i + 1))
 
         for j in range(POPULATION):
@@ -138,23 +166,33 @@ if __name__ == '__main__':
 
                 # Update Global Best
                 if currentError < global_best_error:
-                    print('New Global Best! Error: {}'.format(currentError))
+                    if VERBOSE:
+                        print('New Global Best! Error: {}'.format(currentError))
                     global_best_pos = position[j]
                     global_best_error = currentError
 
         metrics['error'].append(global_best_error)
 
         if PLOT_GRAPHS:
-            plt.figure(2)
             plt.ion()
             plt.show()
-            plt.plot(i + 1, global_best_error, 'ro', markersize=4)
+            ax_error.plot(i + 1, global_best_error, 'ro', markersize=4)
             plt.pause(0.001)
         
         if global_best_error <= ERROR_THRESHOLD:
-            print('Reached error threshold on iteration {}.'.format(i + 1))
+            if VERBOSE:
+                print('Reached error threshold on iteration {}.'.format(i + 1))
+            metrics['it_duration'].append(time() - start)
+            metrics['converged'] = True
             break
         
+        if (i + 1) == ITERATIONS:
+            if VERBOSE:
+                print('Reached maximum number of iterations')
+            metrics['it_duration'].append(time() - start)
+            metrics['reachedMaxIt'] = True
+            break
+
         # Damping Inertia
         INERTIA *= DAMPINIG
 
@@ -162,13 +200,15 @@ if __name__ == '__main__':
 
     metrics['final_denominator'] = global_best_pos
     
-    print('Final denominator: {}'.format(global_best_pos))
+    if VERBOSE:
+        print('Final denominator: {}'.format(global_best_pos))
+    
     final_w, final_h = freqz(global_best_pos)
 
     if PLOT_GRAPHS:
         plt.ioff()
-        plt.figure(1)
-        plt.plot(final_w / np.pi, 20 * np.log10(abs(final_h)))
+        ax_response.plot(final_w / np.pi, 20 * np.log10(abs(final_h)), 'r--', linewidth=3, label='Result')
+        ax_response.legend()
         plt.show()
 
     if SAVE_METRICS:
