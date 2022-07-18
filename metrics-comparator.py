@@ -89,8 +89,6 @@ def compare_metrics(file_1, file_2):
     row_headers = [x.pop(0) for x in table_data]
     ax_table = plt.subplot(224)
 
-    # Table data needs to be non-numeric text. Format the data
-    # while I'm at it.
     cell_text = []
     for row in table_data:
         cell_text.append([f'{x}' for x in row])
@@ -98,8 +96,7 @@ def compare_metrics(file_1, file_2):
     rcolors = plt.cm.BuPu(np.full(len(row_headers), 0.1))
     ccolors = plt.cm.BuPu(np.full(len(column_headers), 0.1))
 
-    # Add a table at the bottom of the axes
-    table = ax_table.table(cellText=cell_text,
+    ax_table.table(cellText=cell_text,
         rowLabels=row_headers,
         rowColours=rcolors,
         colLabels=column_headers,

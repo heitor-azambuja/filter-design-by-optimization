@@ -3,7 +3,7 @@ This code finds the factors of finite impulse respone (FIR) digital filters tran
 
 ## Instalation
 
-This code only uses three libraries, [matplotlib](https://matplotlib.org/3.5.1/index.html), [numpy](https://numpy.org/) and [scipy](https://docs.scipy.org/doc/scipy/index.html). Use the package manager [pip](https://pip.pypa.io/en/stable/) to install.
+This code only uses three non-standard libraries, [matplotlib](https://matplotlib.org/3.5.1/index.html), [numpy](https://numpy.org/) and [scipy](https://docs.scipy.org/doc/scipy/index.html). Use the package manager [pip](https://pip.pypa.io/en/stable/) to install.
 
 ```bash
 python3 -m pip install -r requirements.txt
