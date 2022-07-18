@@ -10,7 +10,8 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('-p', '--processes', type=int, default=8, 
 					help='Number of processes to run. Defaults to 8.\
-						WARNING: Running this script with a high number of processes'
+						WARNING: Running this script with a high number of processes\
+						will cause your cpu to go 100%% for a while. Run at your own risk.'
 )
 
 args = parser.parse_args()
