@@ -2,12 +2,25 @@ from scipy.signal import freqz
 from jsonHandler import load_json
 import matplotlib.pyplot as plt
 import numpy as np
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-o', '--order', type=int, default=2,
+                    help='Order of the filter. Defaults to 2.')
+parser.add_argument('-fo', '--file_offset', type=int, 
+                    help='Offset of the files to be compared.')
 
-ORDER = 2
+args = parser.parse_args()
 
-FILE_1 = 'results/pso-ord{}-metrics0.json'.format(ORDER)
-FILE_2 = 'results/tribes-ord{}-metrics0.json'.format(ORDER)
+if args.file_offset is None:
+    FILE_OFFSET = ''
+else:
+    FILE_OFFSET = '{}'.format(args.file_offset)
+
+ORDER = args.order
+
+FILE_1 = 'results/pso-ord{}-metrics{}.json'.format(ORDER, FILE_OFFSET)
+FILE_2 = 'results/tribes-ord{}-metrics{}.json'.format(ORDER, FILE_OFFSET)
 
 
 def compare_metrics(file_1, file_2):
