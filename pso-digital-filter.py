@@ -18,7 +18,7 @@ parser.add_argument('-i', '--iterations', type=int, default=2000,
 )
 parser.add_argument('-po', '--population', type=int, default=100, help='Swarm size. Defaults to 100.')
 parser.add_argument('-p', '--plot', action='store_true', help='Plot error and filter response.')
-parser.add_argument('-s', '--save', action='store_true', help='Save metrics to json file (defaults to true).')
+parser.add_argument('-s', '--save', action='store_true', help='Save metrics to json file.')
 parser.add_argument('-v', '--verbose', action='store_true', help='Print verbose output.')
 
 args = parser.parse_args()
