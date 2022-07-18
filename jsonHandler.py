@@ -18,7 +18,7 @@ def uniquify(path, sep = ''):
         path = os.path.normpath(path)
         dirname, basename = os.path.split(path)
         filename, ext = os.path.splitext(basename)
-        fd, filename = tempfile.mkstemp(dir = dirname, prefix = filename, suffix = ext)
+        _, filename = tempfile.mkstemp(dir = dirname, prefix = filename, suffix = ext)
         tempfile._name_sequence = orig
     return filename
 ###################################################################################################
@@ -37,3 +37,14 @@ def save_json(data, filename):
     except Exception as e:
         print('Could not create new file')
         print(str(e))
+
+
+def load_json(filename):
+    try:
+        with open(filename, 'r') as in_file:
+            data = json.load(in_file)
+    except Exception as e:
+        print('Could not load file')
+        print(str(e))
+        data = None
+    return data
