@@ -2,6 +2,7 @@ from jsonHandler import save_json, load_json
 import matplotlib.pyplot as plt
 import numpy as np
 import argparse
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-o', '--order', type=int, default=2,
@@ -10,13 +11,18 @@ parser.add_argument('-n', '--number_of_files', type=int, default=4,
                     help='Number of files to be averaged. How many offsets of the same file name. Defaults to 4')
 parser.add_argument('-s', '--save', action='store_true', 
                     help='Save metrics to json file.')
+parser.add_argument('-sf', '--save_figure', action='store_true',
+                    help='Save figure as png. It will not be shown.')
 
 args = parser.parse_args()
 
 FILES_NUM = args.number_of_files
 ORDER = args.order
 
-SAVE_AVERARED_METRICS = args.save
+SAVE_AVERAGED_METRICS = args.save
+SAVE_FIGURE = args.save_figure
+PATH = 'results/img/average/'
+FIGURE_NAME = 'ord{}-metrics-averaged'.format(ORDER)
 
 first_pso_file = 'results/pso-ord{}-metrics.json'.format(ORDER)
 first_tribes_file = 'results/tribes-ord{}-metrics.json'.format(ORDER)
@@ -64,7 +70,7 @@ if __name__ == '__main__':
     pso_avg_metrics = average_metrics(pso_files)
     tribes_avg_metrics = average_metrics(tribes_files)
 
-    if SAVE_AVERARED_METRICS:
+    if SAVE_AVERAGED_METRICS:
         save_json(pso_avg_metrics, 'results/pso-ord{}-metrics-averaged.json'.format(ORDER))
         save_json(tribes_avg_metrics, 'results/tribes-ord{}-metrics-averaged.json'.format(ORDER))
 
@@ -149,4 +155,17 @@ if __name__ == '__main__':
     ax_table.set_title('Averaged Metrics')
 
     plt.tight_layout()
-    plt.show()
+    
+    if SAVE_FIGURE:
+        counter = -1
+        for i in os.listdir(PATH):
+            if i.startswith(FIGURE_NAME):
+                counter += 1
+        
+        suffix = '.png'
+        if counter >= 0:
+            suffix = str(counter) + suffix
+
+        plt.savefig(PATH + FIGURE_NAME + suffix)
+    else:
+        plt.show()

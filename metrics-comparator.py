@@ -3,12 +3,15 @@ from jsonHandler import load_json
 import matplotlib.pyplot as plt
 import numpy as np
 import argparse
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-o', '--order', type=int, default=2,
                     help='Order of the filter. Defaults to 2.')
 parser.add_argument('-fo', '--file_offset', type=int, 
                     help='Offset of the files to be compared.')
+parser.add_argument('-sf', '--save_figure', action='store_true',
+                    help='Save figure as png. It will not be shown.')
 
 args = parser.parse_args()
 
@@ -18,6 +21,10 @@ else:
     FILE_OFFSET = '{}'.format(args.file_offset)
 
 ORDER = args.order
+
+SAVE_FIGURE = args.save_figure
+FIGURE_NAME = 'ord{}-metrics-comparator'.format(ORDER)
+FIGURE_PATH = 'results/img/'
 
 FILE_1 = 'results/pso-ord{}-metrics{}.json'.format(ORDER, FILE_OFFSET)
 FILE_2 = 'results/tribes-ord{}-metrics{}.json'.format(ORDER, FILE_OFFSET)
@@ -114,7 +121,20 @@ def compare_metrics(file_1, file_2):
     
     plt.draw()
     plt.tight_layout()
-    plt.show()
+
+    if SAVE_FIGURE:
+        counter = -1
+        for i in os.listdir(FIGURE_PATH):
+            if i.startswith(FIGURE_NAME):
+                counter += 1
+        
+        suffix = '.png'
+        if counter >= 0:
+            suffix = str(counter) + suffix
+
+        plt.savefig(FIGURE_PATH + FIGURE_NAME + suffix)
+    else:
+        plt.show()
 
 
 if __name__ == '__main__':
